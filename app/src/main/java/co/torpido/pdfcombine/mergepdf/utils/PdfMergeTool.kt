@@ -45,11 +45,10 @@ class PdfMergeTool(private val context: Context) {
                                 val pageCount = renderer.pageCount
                                 for (pageIndex in 0 until pageCount) {
 
-                                    //GETTING IMAGES FROM PDF
                                     val page = renderer.openPage(pageIndex)
                                     val bitmap = Bitmap.createBitmap(
-                                        page.width,
-                                        page.height,
+                                        page.width*2,
+                                        page.height*2,
                                         Bitmap.Config.ARGB_8888
                                     )
                                     val canvas = Canvas(bitmap)
@@ -58,10 +57,9 @@ class PdfMergeTool(private val context: Context) {
                                         bitmap,
                                         null,
                                         null,
-                                        PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY
+                                        PdfRenderer.Page.RENDER_MODE_FOR_PRINT
                                     )
-
-                                    //ADDING IMAGE TO PDF
+                                    
                                     val pageInfo = PdfDocument.PageInfo.Builder(A4_WIDTH, A4_HEIGHT, 1).create()
                                     val pdfPage = pdfDocument.startPage(pageInfo)
                                     val pdfCanvas = pdfPage.canvas
@@ -102,8 +100,8 @@ class PdfMergeTool(private val context: Context) {
     }
 
     companion object {
-        private const val A4_WIDTH = 595
-        private const val A4_HEIGHT = 842
+        private const val A4_WIDTH = 595*2
+        private const val A4_HEIGHT = 842*2
     }
 
 }
