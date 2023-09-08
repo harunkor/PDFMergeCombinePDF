@@ -3,4 +3,21 @@
     <string name="pdfmerge">PDFMERGE_</string>
     <string name="not_empty">Select list cannot be empty</string>
     <string name="date_format_text">ddMMyyyyhhmmss</string>
+
+    <!-- HomeFragment-->
+
+    <string name="pdf_documents_text">You don\u00E2\u0080\u0099t have any PDF Documents</string>
+    <string name="add_button_content_description">Add Button</string>
+    <string name="home_fragment">Home Screen</string>
+    <string name="pdf_icon_content_description">PDF Icon</string>
+    <string name="eleven_pages_placeholder">%d Pages</string>
+    <string name="brief_task">Brief-task-today.pdf</string>
+
+    <!-- HistoryFragment-->
+    <string name="history">History</string>
+    <string name="pdf">.pdf</string>
+    <string name="merge">Merge</string>
+    <string name="three">%d </string>
+    <string name="files_will_be_merged">&#160;files will be merged</string>
+
 </resources>
