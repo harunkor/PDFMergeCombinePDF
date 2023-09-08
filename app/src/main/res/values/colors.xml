@@ -2,4 +2,13 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="pdf_document_text_color">#A42516</color>
+    <color name="add_button_color">#A40D0D</color>
+    <color name="background_color">#FFF4F2</color>
+    <color name="unselected_icon_color">#FFF4F2</color>
+
+    <color name="unselected_color">#80A42516</color>
+
+
 </resources>
