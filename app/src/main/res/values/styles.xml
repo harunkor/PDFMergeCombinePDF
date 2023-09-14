@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <!-- fragment_home.xml -->
+    <style name="you_do_not_have_any_pdf_documents">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">#A42516</item>
+    </style>
+
+    <!-- fragment_history.xml -->
+    <style name="history">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">#D18C84</item>
+    </style>
+
+    <!-- item_history.xml-->
+    <style name="brief_task_">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#A40D0D</item>
+    </style>
+    <style name="pages">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">#A40D0D</item>
+    </style>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize the status bar color -->
+        <item name="android:statusBarColor">@color/white</item>
+        <!-- Add other style attributes as needed -->
+    </style>
+
+</resources>
