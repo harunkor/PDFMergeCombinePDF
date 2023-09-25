@@ -1,5 +1,8 @@
 package co.torpido.pdfcombine.mergepdf.presentation.ui.merge
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -23,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -36,14 +41,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.torpido.pdfcombine.mergepdf.R
+import co.torpido.pdfcombine.mergepdf.extension.getFileNameAndExtension
+import co.torpido.pdfcombine.mergepdf.extension.getPdfPageCount
 
 @Composable
-fun MergeScreen(addPDF: () -> Unit) {
-    MergeScreenList(addPDF = addPDF)
+fun MergeScreen(addPDF: () -> Unit, pdfList: List<Uri>) {
+     MergeScreenList(addPDF = addPDF, pdfList = pdfList)
 }
 
 @Composable
-fun MergeScreenList(modifier: Modifier = Modifier, addPDF: () -> Unit) {
+fun MergeScreenList(modifier: Modifier = Modifier, addPDF: () -> Unit,pdfList: List<Uri>) {
     val annotatedTopBarText = buildAnnotatedString {
         withStyle(
             style = SpanStyle(
@@ -73,7 +80,7 @@ fun MergeScreenList(modifier: Modifier = Modifier, addPDF: () -> Unit) {
 
             )
         ) {
-            append(stringResource(id = R.string.three, 3))
+            append(stringResource(id = R.string.three, pdfList.size))
         }
 
         withStyle(
@@ -135,15 +142,34 @@ fun MergeScreenList(modifier: Modifier = Modifier, addPDF: () -> Unit) {
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
-        items(15) {
-            MergeScreenItem(Modifier.padding(start = 8.dp, end = 8.dp))
+
+        items(pdfList) { pdfUri ->
+            MergeScreenItem(
+                modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+                title = fileNameExtension(pdfUri) ,
+                pageCount = pdfPageCount(pdfUri, LocalContext.current)
+            )
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
 
+
+private fun fileNameExtension(uri: Uri):String {
+    val fileInfo = uri.getFileNameAndExtension()
+    return fileInfo?.first.toString()
+}
+
+private fun pdfPageCount(uri: Uri,context: Context): Int {
+   return  uri.getPdfPageCount(context)
+}
+
 @Composable
-fun MergeScreenItem(modifier: Modifier = Modifier) {
+fun MergeScreenItem(
+    modifier: Modifier = Modifier,
+    title: String,
+    pageCount: Int
+) {
     Column {
         Row(
             modifier = modifier
@@ -170,7 +196,7 @@ fun MergeScreenItem(modifier: Modifier = Modifier) {
                     .weight(1f)
             ) {
                 Text(
-                    text = stringResource(id = R.string.brief_task),
+                    text = title,
                     style = TextStyle(
                         fontSize = 14.sp,
                         fontFamily = FontFamily(Font(R.font.inter)),
@@ -181,7 +207,7 @@ fun MergeScreenItem(modifier: Modifier = Modifier) {
                 )
                 Spacer(modifier = Modifier.height(3.dp))
                 Text(
-                    text = stringResource(id = R.string.eleven_pages_placeholder, 11),
+                    text = stringResource(id = R.string.eleven_pages_placeholder, pageCount),
                     style = TextStyle(
                         fontSize = 12.sp,
                         fontFamily = FontFamily(Font(R.font.inter)),
@@ -199,7 +225,7 @@ fun MergeScreenItem(modifier: Modifier = Modifier) {
 @Composable
 fun MergeScreenItemPreview() {
     MaterialTheme {
-        MergeScreenItem()
+        MergeScreenItem(Modifier.padding(start = 8.dp, end = 8.dp),stringResource(id = R.string.brief_task),11)
     }
 }
 
@@ -207,7 +233,7 @@ fun MergeScreenItemPreview() {
 @Composable
 fun MergeScreenListPreview() {
     MaterialTheme {
-        MergeScreenList(addPDF = {})
+        MergeScreenList(addPDF = {},pdfList = emptyList())
     }
 }
 
@@ -215,6 +241,6 @@ fun MergeScreenListPreview() {
 @Composable
 fun MergeScreenPreview() {
     MaterialTheme {
-        MergeScreen(addPDF = {})
+        MergeScreen(addPDF = {},pdfList = emptyList())
     }
 }

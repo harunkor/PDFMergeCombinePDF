@@ -77,7 +77,7 @@ fun HistoryScreenList(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(134.dp)
+                    .height(100.dp)
                     .background(
                         color = Color(0xFFFFFFFF),
                         shape = RoundedCornerShape(size = 0.dp)
@@ -88,7 +88,7 @@ fun HistoryScreenList(
                     text = annotatedTopBarText,
                     modifier = modifier
                         .weight(1f)
-                        .padding(start = 16.dp, top = 45.dp)
+                        .padding(start = 16.dp, top = 0.dp)
                 )
 
                 Box {
@@ -99,7 +99,7 @@ fun HistoryScreenList(
                         ),
                         contentScale = ContentScale.None,
                         modifier = modifier
-                            .padding(top = 86.dp, end = 16.dp)
+                            .padding(top = 32.dp, end = 16.dp)
                             .clickable(onClick = addPDF)
                             .wrapContentSize()
                     )

@@ -9,17 +9,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import co.torpido.pdfcombine.mergepdf.presentation.navigation.BottomNavigationBar
 import co.torpido.pdfcombine.mergepdf.presentation.navigation.Navigation
+import co.torpido.pdfcombine.mergepdf.presentation.navigation.NavigationItem
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun PdfApp(addPDF: () -> Unit) {
-    val navController = rememberNavController()
+fun PdfApp(addPDF: () -> Unit,navController: NavHostController,onNavItemClicked: (NavigationItem) -> Unit) {
 
     Scaffold(
-        bottomBar = { BottomNavigationBar(navController) },
+        bottomBar = { BottomNavigationBar(navController,onNavItemClicked) },
         content = { padding ->
             Box(modifier = Modifier.padding(padding)) {
                 Navigation(navController = navController, addPdf = addPDF)
@@ -33,9 +35,11 @@ fun PdfApp(addPDF: () -> Unit) {
 @Preview
 @Composable
 fun PdfAppPreview() {
+    val navController = rememberNavController()
+    val onNavItemClicked: (NavigationItem) -> Unit = { }
     MaterialTheme {
         PdfApp(addPDF = {
 
-        })
+        },navController,onNavItemClicked)
     }
 }

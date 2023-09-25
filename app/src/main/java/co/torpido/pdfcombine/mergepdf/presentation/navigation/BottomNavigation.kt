@@ -1,5 +1,8 @@
 package co.torpido.pdfcombine.mergepdf.presentation.navigation
 
+import android.net.Uri
+import android.os.Build
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
@@ -10,14 +13,18 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -32,8 +39,8 @@ import co.torpido.pdfcombine.mergepdf.presentation.ui.merge.MergeScreen
 
 sealed class NavigationItem(var route: String, var icon: Int) {
     data object Home : NavigationItem("home", R.drawable.home_icon)
-    data object Merge : NavigationItem("music", R.drawable.merge_arrow)
-    data object History : NavigationItem("movies", R.drawable.history_icon)
+    data object Merge : NavigationItem("merge", R.drawable.merge_arrow)
+    data object History : NavigationItem("history", R.drawable.history_icon)
 }
 
 @Composable
@@ -42,8 +49,18 @@ fun Navigation(navController: NavHostController, addPdf: () -> Unit) {
         composable(NavigationItem.Home.route) {
             HomeScreen(addPDF = addPdf)
         }
-        composable(NavigationItem.Merge.route) {
-            MergeScreen(addPDF = addPdf)
+        composable("${NavigationItem.Merge.route}?pdfList={pdfList}") {
+            val uriListString = it.arguments?.getString("pdfList")
+            val pdfList: List<Uri>? = if (uriListString != null) {
+                val uriList = uriListString.split(",").map { Uri.parse(it) }
+                uriList
+            } else {
+                null
+            }
+
+            pdfList?.let { pdfList ->
+                MergeScreen(addPDF = addPdf,pdfList = pdfList.toList())
+            } ?: HomeScreen(addPDF = addPdf)
         }
         composable(NavigationItem.History.route) {
             HistoryScreen(addPDF = addPdf)
@@ -52,7 +69,7 @@ fun Navigation(navController: NavHostController, addPdf: () -> Unit) {
 }
 
 @Composable
-fun BottomNavigationBar(navController: NavController, modifier: Modifier = Modifier) {
+fun BottomNavigationBar(navController: NavController,onNavItemClicked: (NavigationItem) -> Unit, modifier: Modifier = Modifier) {
     val items = listOf(
         NavigationItem.Home,
         NavigationItem.Merge,
@@ -116,6 +133,7 @@ fun BottomNavigationBar(navController: NavController, modifier: Modifier = Modif
                     alwaysShowLabel = true,
                     selected = currentRoute == item.route,
                     onClick = {
+                        onNavItemClicked(item)
                         navController.navigate(item.route) {
 
                             navController.graph.startDestinationRoute?.let { route ->
@@ -125,7 +143,9 @@ fun BottomNavigationBar(navController: NavController, modifier: Modifier = Modif
                             }
                             launchSingleTop = true
                             restoreState = true
+
                         }
+
                     }
                 )
             }
