@@ -19,5 +19,6 @@
     <string name="merge">Merge</string>
     <string name="three">%d </string>
     <string name="files_will_be_merged">&#160;files will be merged</string>
+    <string name="not_found">The merged pdf file was not found.</string>
 
 </resources>

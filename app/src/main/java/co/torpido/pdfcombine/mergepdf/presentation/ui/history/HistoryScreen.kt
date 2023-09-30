@@ -1,5 +1,10 @@
 package co.torpido.pdfcombine.mergepdf.presentation.ui.history
 
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,13 +21,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -35,18 +43,53 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.FileProvider
+import androidx.documentfile.provider.DocumentFile
 import co.torpido.pdfcombine.mergepdf.R
+import co.torpido.pdfcombine.mergepdf.extension.getFileNameAndExtension
+import co.torpido.pdfcombine.mergepdf.extension.getPdfPageCount
+import java.io.File
 
 @Composable
 fun HistoryScreen(addPDF: () -> Unit) {
-    HistoryScreenList(addPDF = addPDF)
+    val context = LocalContext.current
+    val pdfList =  listAllPdfFilesInDirectory(context)
+    HistoryScreenList(addPDF = addPDF,pdfList = pdfList)
+}
+
+private fun listAllPdfFilesInDirectory(context: Context): List<Uri> {
+    val pdfUriList = mutableListOf<Uri>()
+    val directory = createPdfMergeDirectory(context)
+
+    if (directory.exists() && directory.isDirectory) {
+        val files = directory.listFiles()
+
+        for (file in files) {
+            if (file.isFile && file.extension.equals("pdf", ignoreCase = true)) {
+                val pdfUri = Uri.fromFile(file)
+                pdfUriList.add(pdfUri)
+            }
+        }
+    }
+
+    return pdfUriList
+}
+
+private fun createPdfMergeDirectory(context: Context): File {
+    val directory = File(context.getExternalFilesDir(null), "PDF-MERGE")
+    if (!directory.exists()) {
+        directory.mkdirs()
+    }
+    return directory
 }
 
 @Composable
 fun HistoryScreenList(
     modifier: Modifier = Modifier,
-    addPDF: () -> Unit
+    addPDF: () -> Unit,
+    pdfList: List<Uri>
 ) {
+    val context = LocalContext.current
     val annotatedTopBarText = buildAnnotatedString {
         withStyle(
             style = SpanStyle(
@@ -109,7 +152,7 @@ fun HistoryScreenList(
         item {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "History",
+                text = if (pdfList.isEmpty()) stringResource(id = R.string.not_found)  else "History",
                 style = TextStyle(
                     fontSize = 18.sp,
                     fontFamily = FontFamily(Font(R.font.inter)),
@@ -122,15 +165,28 @@ fun HistoryScreenList(
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
-        items(15) {
-            HistoryScreenItem(Modifier.padding(start = 8.dp, end = 8.dp))
-            Spacer(modifier = Modifier.height(16.dp))
-        }
+
+
+            items(pdfList) {   pdfUri ->
+                HistoryScreenItem(
+                    modifier = Modifier
+                        .clickable { openPdf(pdfUri, context) }
+                        .padding(start = 8.dp, end = 8.dp),
+                    title = fileNameExtension(pdfUri) ,
+                    pageCount = pdfPageCount(pdfUri, LocalContext.current)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
     }
 }
 
 @Composable
-fun HistoryScreenItem(modifier: Modifier = Modifier) {
+fun HistoryScreenItem(
+    modifier: Modifier = Modifier,
+    title: String,
+    pageCount: Int
+) {
     Column {
         Row(
             modifier = modifier
@@ -157,7 +213,7 @@ fun HistoryScreenItem(modifier: Modifier = Modifier) {
                     .weight(1f)
             ) {
                 Text(
-                    text = stringResource(id = R.string.brief_task),
+                    text = title,
                     style = TextStyle(
                         fontSize = 14.sp,
                         fontFamily = FontFamily(Font(R.font.inter)),
@@ -168,7 +224,7 @@ fun HistoryScreenItem(modifier: Modifier = Modifier) {
                 )
                 Spacer(modifier = Modifier.height(3.dp))
                 Text(
-                    text = stringResource(id = R.string.eleven_pages_placeholder, 11),
+                    text = stringResource(id = R.string.eleven_pages_placeholder, pageCount),
                     style = TextStyle(
                         fontSize = 12.sp,
                         fontFamily = FontFamily(Font(R.font.inter)),
@@ -182,11 +238,42 @@ fun HistoryScreenItem(modifier: Modifier = Modifier) {
     }
 }
 
+private fun fileNameExtension(uri: Uri):String {
+    val fileInfo = uri.getFileNameAndExtension()
+    return fileInfo?.first.toString()
+}
+
+private fun pdfPageCount(uri: Uri,context: Context): Int {
+    return  uri.getPdfPageCount(context)
+}
+
+private fun openPdf(pdfUri: Uri, context: Context) {
+    val contentResolver = context.contentResolver
+    val contentDescriptor = DocumentFile.fromSingleUri(context, pdfUri)
+    val contentUri = contentDescriptor?.uri
+
+    if (contentUri != null) {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.setDataAndType(contentUri, "application/pdf")
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+
+        try {
+            context.startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(context, "No PDF viewer app found", Toast.LENGTH_SHORT).show()
+        }
+    } else {
+        Toast.makeText(context, "Invalid PDF URI", Toast.LENGTH_SHORT).show()
+    }
+}
+
+
+
 @Preview
 @Composable
 fun HistoryScreenItemPreview() {
     MaterialTheme {
-        HistoryScreenItem()
+        HistoryScreenItem(Modifier.padding(start = 8.dp, end = 8.dp),stringResource(id = R.string.brief_task),11)
     }
 }
 
@@ -194,7 +281,7 @@ fun HistoryScreenItemPreview() {
 @Composable
 fun HistoryScreenListPreview() {
     MaterialTheme {
-        HistoryScreenList(addPDF = {})
+        HistoryScreenList(addPDF = {},pdfList = emptyList())
     }
 }
 

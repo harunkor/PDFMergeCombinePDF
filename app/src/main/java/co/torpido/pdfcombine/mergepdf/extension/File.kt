@@ -4,9 +4,7 @@ import android.content.Context
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.ParcelFileDescriptor
-import android.util.Log
 import androidx.documentfile.provider.DocumentFile
-import java.io.File
 import java.io.IOException
 
 

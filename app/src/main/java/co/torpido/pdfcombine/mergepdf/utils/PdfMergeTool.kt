@@ -86,9 +86,8 @@ class PdfMergeTool(private val context: Context) {
     private fun savePdfDocument(pdfDocument: PdfDocument) {
 
         val fileName = context.getString(R.string.pdfmerge) + SimpleDateFormat(context.getString(R.string.date_format_text), Locale.UK).format(Calendar.getInstance().time)
-        val downloadDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
 
-        val file = File(downloadDirectory,"/$fileName.pdf")
+        val file = File(createPdfMergeDirectory(),"/$fileName.pdf")
 
         try {
             pdfDocument.writeTo(FileOutputStream(file))
@@ -102,6 +101,14 @@ class PdfMergeTool(private val context: Context) {
     companion object {
         private const val A4_WIDTH = 595*2
         private const val A4_HEIGHT = 842*2
+    }
+
+    private fun createPdfMergeDirectory(): File {
+        val directory = File(context.getExternalFilesDir(null), "PDF-MERGE")
+        if (!directory.exists()) {
+            directory.mkdirs()
+        }
+        return directory
     }
 
 }

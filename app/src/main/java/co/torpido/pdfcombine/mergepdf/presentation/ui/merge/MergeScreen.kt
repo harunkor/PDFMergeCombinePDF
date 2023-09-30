@@ -1,8 +1,11 @@
 package co.torpido.pdfcombine.mergepdf.presentation.ui.merge
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -24,6 +27,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -40,9 +48,12 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.FileProvider
+import androidx.documentfile.provider.DocumentFile
 import co.torpido.pdfcombine.mergepdf.R
 import co.torpido.pdfcombine.mergepdf.extension.getFileNameAndExtension
 import co.torpido.pdfcombine.mergepdf.extension.getPdfPageCount
+import java.io.File
 
 @Composable
 fun MergeScreen(addPDF: () -> Unit, pdfList: List<Uri>) {
@@ -51,6 +62,9 @@ fun MergeScreen(addPDF: () -> Unit, pdfList: List<Uri>) {
 
 @Composable
 fun MergeScreenList(modifier: Modifier = Modifier, addPDF: () -> Unit,pdfList: List<Uri>) {
+
+    val context = LocalContext.current
+
     val annotatedTopBarText = buildAnnotatedString {
         withStyle(
             style = SpanStyle(
@@ -145,7 +159,8 @@ fun MergeScreenList(modifier: Modifier = Modifier, addPDF: () -> Unit,pdfList: L
 
         items(pdfList) { pdfUri ->
             MergeScreenItem(
-                modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+                modifier = Modifier.clickable { openPdf(pdfUri,context) }.
+                padding(start = 8.dp, end = 8.dp),
                 title = fileNameExtension(pdfUri) ,
                 pageCount = pdfPageCount(pdfUri, LocalContext.current)
             )
@@ -163,6 +178,28 @@ private fun fileNameExtension(uri: Uri):String {
 private fun pdfPageCount(uri: Uri,context: Context): Int {
    return  uri.getPdfPageCount(context)
 }
+
+
+private fun openPdf(pdfUri: Uri, context: Context) {
+    val contentResolver = context.contentResolver
+    val contentDescriptor = DocumentFile.fromSingleUri(context, pdfUri)
+    val contentUri = contentDescriptor?.uri
+
+    if (contentUri != null) {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.setDataAndType(contentUri, "application/pdf")
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+
+        try {
+            context.startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(context, "No PDF viewer app found", Toast.LENGTH_SHORT).show()
+        }
+    } else {
+        Toast.makeText(context, "Invalid PDF URI", Toast.LENGTH_SHORT).show()
+    }
+}
+
 
 @Composable
 fun MergeScreenItem(

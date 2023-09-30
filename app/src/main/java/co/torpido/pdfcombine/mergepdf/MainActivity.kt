@@ -6,8 +6,6 @@ import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import co.torpido.pdfcombine.mergepdf.databinding.ActivityMainBinding
@@ -26,20 +24,18 @@ class MainActivity : PdfPickerActivity(R.layout.activity_main) {
     private val binding: ActivityMainBinding by dataBinding()
     private lateinit var navController: NavHostController
     private var uriList: MutableList<Uri> = mutableListOf()
-    val onNavItemClicked: (NavigationItem) -> Unit = { item ->
+
+    @Inject
+    lateinit var pdfMergeTool: PdfMergeTool
+
+    private val onNavItemClicked: (NavigationItem) -> Unit = { item ->
 
         when (item) {
             is NavigationItem.Home -> {
 
             }
-            is NavigationItem.Merge -> {
-                if(uriList.size>1) {
-                    pdfMergeTool.mergePDFs(uriList)
-                    navController.navigate(NavigationItem.History.route)
-                    uriList.clear()
-                }else {
-                }
-
+            is NavigationItem.Merge -> if(uriList.size>1) {
+                pdfMergeTool.mergePDFs(uriList)
             }
             is NavigationItem.History -> {
 
@@ -47,8 +43,7 @@ class MainActivity : PdfPickerActivity(R.layout.activity_main) {
         }
     }
 
-    @Inject
-    lateinit var pdfMergeTool: PdfMergeTool
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +69,7 @@ class MainActivity : PdfPickerActivity(R.layout.activity_main) {
 
 
     private fun initListener() = with(binding) {
-        setSuccessListener { b, uris ->
+        setSuccessListener { _, uris ->
             uriList = uris
             navController.navigate("${NavigationItem.Merge.route}?pdfList=$uris")
         }
@@ -85,14 +80,20 @@ class MainActivity : PdfPickerActivity(R.layout.activity_main) {
                     "Download dizinine kayıt edilerek birleştirme tamamlandı",
                     Toast.LENGTH_SHORT
                 ).show()
+
+                navController.navigate(NavigationItem.History.route)
             } else {
-                Toast.makeText(this@MainActivity, "HATA: $errorMessage", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, "Error: $errorMessage", Toast.LENGTH_SHORT).show()
 
             }
+            uriList.clear()
+
 
         }
 
     }
+
+
 
 
 }
