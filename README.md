@@ -1,48 +1,50 @@
-# PDFMergeCombinePDF 🏒
-    text desc...
+# **PDFMergeCombinePDF** 🧞‍
 
-## Used Technologies 👨‍💻
-
- - Navigation Component
- - Dependency injection with Hilt 
- - Kotlin coroutines on Android 
- - DataBinding
-
-## Screens 📱
+A simple Android PDFMergeCombinePDF that lets you create an Android project quickly.
 
 
+### **How to Use** 👣
+
+Just click on code button to create a new repo starting from this project.
 
 
-## Video 🎥
+## **Features** 🕹
+
+- 100% Kotlin-only template
+- Following Clean Architecture approach
+- Following MVVM Architectural Design Pattern
+- Flow - Built on top of coroutines and is stream of data that can be computed asynchronously
+- Simplest Adapter Ever (based on this workaround)
+- Hilt - Dependency Injection framework
+- Data Binding - Data Binding
+- Navigation Components
+- File uploading - Uploading files to merge them 
+- Bottom Navigations
+- Material Components - Material Design
+- Kotlin DSL - Alternative syntax to the Groovy DSL
+- Navigation - Navigate through the app
+- Dark/Light Theme - Support dark/light themes
+
+
+## **Under Development** 🚧
+
+- ~~Use Kotlin DSL~~
+- ~~Use Hilt. To see changes, click <span style="color: blue;">[here.](https://developer.android.com/training/dependency-injection/hilt-android)</span>~~
+- ~~Use ViewBinding. To see changes, click <span style="color: blue;">[here.](https://developer.android.com/topic/libraries/view-binding)</span>~~
+
+
+##  **Contributing** 🤝
+
+Feel free to open an issue or submit a pull request for any bugs/improvements.
+
+
+##  **Result**  📺
 
 
 
 
-## License 📝
 
-```
-MIT License
 
-Copyright (c) 2022 Harun Kör
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
 
 
 
