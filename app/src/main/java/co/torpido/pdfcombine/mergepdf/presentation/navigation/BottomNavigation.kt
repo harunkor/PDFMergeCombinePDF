@@ -2,6 +2,7 @@ package co.torpido.pdfcombine.mergepdf.presentation.navigation
 
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
@@ -52,14 +53,15 @@ fun Navigation(navController: NavHostController, addPdf: () -> Unit) {
         composable("${NavigationItem.Merge.route}?pdfList={pdfList}") {
             val uriListString = it.arguments?.getString("pdfList")
             val pdfList: List<Uri>? = if (uriListString != null) {
-                val uriList = uriListString.split(",").map { Uri.parse(it) }
+                val uriList = uriListString.split(',').map {
+                    Uri.parse(it.trim('[', ']', ' ', '\n', '\t')) }
                 uriList
             } else {
                 null
             }
 
             pdfList?.let { pdfList ->
-                MergeScreen(addPDF = addPdf,pdfList = pdfList.toList())
+                MergeScreen(addPDF = addPdf, pdfList = pdfList.toList())
             } ?: HomeScreen(addPDF = addPdf)
         }
         composable(NavigationItem.History.route) {
