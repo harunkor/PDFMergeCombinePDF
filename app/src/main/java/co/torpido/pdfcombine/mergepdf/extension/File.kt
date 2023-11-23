@@ -7,14 +7,21 @@ import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.provider.OpenableColumns
 import android.util.Log
-import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
-import com.tom_roush.pdfbox.pdmodel.PDDocument
-import java.io.FileDescriptor
 import java.io.IOException
-import java.lang.Exception
 
 
+fun Uri.getFileNameAndExtension(): Pair<String, String>? {
+    val path = this.path
+    if (path != null) {
+        val fileName = path.substringAfterLast("/").replace("]","")
+        val extension = fileName.substringAfterLast(".", "")
+        if (extension.isNotEmpty()) {
+            return Pair(fileName, extension)
+        }
+    }
+    return null
+}
 
 fun Uri.getFileNameFromUri(contentResolver: ContentResolver): String {
     var fileName = ""
