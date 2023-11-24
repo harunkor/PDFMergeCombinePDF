@@ -1,6 +1,6 @@
 package co.torpido.pdfcombine.mergepdf.presentation.ui.history
 
-import android.content.ActivityNotFoundException
+
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -26,7 +26,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -44,7 +43,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
-import androidx.documentfile.provider.DocumentFile
 import co.torpido.pdfcombine.mergepdf.R
 import co.torpido.pdfcombine.mergepdf.extension.getFileNameAndExtension
 import co.torpido.pdfcombine.mergepdf.extension.getPdfPageCount
@@ -248,26 +246,17 @@ private fun pdfPageCount(uri: Uri,context: Context): Int {
 }
 
 private fun openPdf(pdfUri: Uri, context: Context) {
-    val contentResolver = context.contentResolver
-    val contentDescriptor = DocumentFile.fromSingleUri(context, pdfUri)
-    val contentUri = contentDescriptor?.uri
-
-    if (contentUri != null) {
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.setDataAndType(contentUri, "application/pdf")
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-
-        try {
-            context.startActivity(intent)
-        } catch (e: ActivityNotFoundException) {
-            Toast.makeText(context, "No PDF viewer app found", Toast.LENGTH_SHORT).show()
-        }
-    } else {
-        Toast.makeText(context, "Invalid PDF URI", Toast.LENGTH_SHORT).show()
+    val file = File(pdfUri.path)
+    val intent = Intent(Intent.ACTION_VIEW)
+    intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+    val uri = FileProvider.getUriForFile(context,context.packageName + ".provider",file)
+    intent.setDataAndType(uri, "application/pdf")
+    if(intent.resolveActivity(context.packageManager) != null){
+        context.startActivity(intent)
+    }else{
+        Toast.makeText(context, "PDF okuyucu bulunamadı.", Toast.LENGTH_LONG).show()
     }
 }
-
-
 
 @Preview
 @Composable
