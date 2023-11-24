@@ -1,6 +1,6 @@
 package co.torpido.pdfcombine.mergepdf.presentation.ui.merge
 
-import android.content.ActivityNotFoundException
+
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -42,10 +42,12 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.documentfile.provider.DocumentFile
+import androidx.core.content.FileProvider
 import co.torpido.pdfcombine.mergepdf.R
 import co.torpido.pdfcombine.mergepdf.extension.getFileNameFromUri
+import co.torpido.pdfcombine.mergepdf.extension.getFilePathFromContentUri
 import co.torpido.pdfcombine.mergepdf.extension.getPdfPageCount
+import java.io.File
 
 
 @Composable
@@ -171,27 +173,23 @@ private fun pdfPageCount(uri: Uri,context: Context): Int {
         return uri.getPdfPageCount(context)
 }
 
-
 private fun openPdf(pdfUri: Uri, context: Context) {
-    val contentResolver = context.contentResolver
-    val contentDescriptor = DocumentFile.fromSingleUri(context, pdfUri)
-    val contentUri = contentDescriptor?.uri
-
-    if (contentUri != null) {
+    val filePath = pdfUri.getFilePathFromContentUri(context)
+    if (filePath!=null){
+        val file = File(filePath)
         val intent = Intent(Intent.ACTION_VIEW)
-        intent.setDataAndType(contentUri, "application/pdf")
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-
-        try {
+        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+        val uri = FileProvider.getUriForFile(context, context.packageName+ ".provider",file)
+        intent.setDataAndType(uri, "application/pdf")
+        if(intent.resolveActivity(context.packageManager) != null){
             context.startActivity(intent)
-        } catch (e: ActivityNotFoundException) {
-            Toast.makeText(context, "No PDF viewer app found", Toast.LENGTH_SHORT).show()
+        }else{
+            Toast.makeText(context, "PDF okuyucu bulunamadı.", Toast.LENGTH_LONG).show()
         }
-    } else {
-        Toast.makeText(context, "Invalid PDF URI", Toast.LENGTH_SHORT).show()
+    }else{
+        Toast.makeText(context, "Dosya yolu bulunamadı", Toast.LENGTH_LONG).show()
     }
 }
-
 
 @Composable
 fun MergeScreenItem(
