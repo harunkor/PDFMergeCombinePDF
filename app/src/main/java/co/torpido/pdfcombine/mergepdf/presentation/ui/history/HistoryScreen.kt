@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
 import co.torpido.pdfcombine.mergepdf.R
-import co.torpido.pdfcombine.mergepdf.extension.getFileNameAndExtension
+import co.torpido.pdfcombine.mergepdf.extension.getFileNameFromUri
 import co.torpido.pdfcombine.mergepdf.extension.getPdfPageCount
 import java.io.File
 
@@ -170,7 +170,7 @@ fun HistoryScreenList(
                     modifier = Modifier
                         .clickable { openPdf(pdfUri, context) }
                         .padding(start = 8.dp, end = 8.dp),
-                    title = fileNameExtension(pdfUri) ,
+                    title = fileNameExtension(pdfUri, LocalContext.current) ,
                     pageCount = pdfPageCount(pdfUri, LocalContext.current)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -236,9 +236,8 @@ fun HistoryScreenItem(
     }
 }
 
-private fun fileNameExtension(uri: Uri):String {
-    val fileInfo = uri.getFileNameAndExtension()
-    return fileInfo?.first.toString()
+private fun fileNameExtension(uri: Uri, context: Context):String {
+    return uri.getFileNameFromUri(context)
 }
 
 private fun pdfPageCount(uri: Uri,context: Context): Int {

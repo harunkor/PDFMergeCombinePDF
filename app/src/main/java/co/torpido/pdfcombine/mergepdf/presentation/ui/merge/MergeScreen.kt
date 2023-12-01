@@ -42,12 +42,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.FileProvider
 import co.torpido.pdfcombine.mergepdf.R
 import co.torpido.pdfcombine.mergepdf.extension.getFileNameFromUri
-import co.torpido.pdfcombine.mergepdf.extension.getFilePathFromContentUri
 import co.torpido.pdfcombine.mergepdf.extension.getPdfPageCount
-import java.io.File
+
 
 
 @Composable
@@ -166,28 +164,22 @@ fun MergeScreenList(modifier: Modifier = Modifier, addPDF: () -> Unit, pdfList: 
 
 
 private fun fileNameExtension(uri: Uri, context: Context):String {
-    return uri.getFileNameFromUri(context.contentResolver)
+    return uri.getFileNameFromUri(context)
 }
 
 private fun pdfPageCount(uri: Uri,context: Context): Int {
-        return uri.getPdfPageCount(context)
+    return uri.getPdfPageCount(context)
+
 }
 
 private fun openPdf(pdfUri: Uri, context: Context) {
-    val filePath = pdfUri.getFilePathFromContentUri(context)
-    if (filePath!=null){
-        val file = File(filePath)
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-        val uri = FileProvider.getUriForFile(context, context.packageName+ ".provider",file)
-        intent.setDataAndType(uri, "application/pdf")
-        if(intent.resolveActivity(context.packageManager) != null){
-            context.startActivity(intent)
-        }else{
-            Toast.makeText(context, "PDF okuyucu bulunamadı.", Toast.LENGTH_LONG).show()
-        }
+    val intent = Intent(Intent.ACTION_VIEW)
+    intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+    intent.setDataAndType(pdfUri, "application/pdf")
+    if(intent.resolveActivity(context.packageManager) != null){
+        context.startActivity(intent)
     }else{
-        Toast.makeText(context, "Dosya yolu bulunamadı", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, "PDF okuyucu bulunamadı.", Toast.LENGTH_LONG).show()
     }
 }
 

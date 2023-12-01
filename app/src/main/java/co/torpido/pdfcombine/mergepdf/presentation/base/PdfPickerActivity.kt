@@ -12,6 +12,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import co.torpido.pdfcombine.mergepdf.extension.getFilePathFromContentUri
+import java.io.File
 
 
 abstract class PdfPickerActivity(res: Int): AppCompatActivity(res) {
@@ -43,11 +46,18 @@ abstract class PdfPickerActivity(res: Int): AppCompatActivity(res) {
         if (clipData != null) {
             for (i in 0 until clipData.itemCount) {
                 val uri = clipData.getItemAt(i).uri
-                selectedPdfUris.add(uri)
+                val filePath = uri.getFilePathFromContentUri(applicationContext)
+                val file = File(filePath)
+                val uriNew = FileProvider.getUriForFile(applicationContext, applicationContext.packageName+ ".provider",file)
+                selectedPdfUris.add(uriNew)
             }
         } else {
             val uri = data.data
-            uri?.let { selectedPdfUris.add(it) }
+            val filePath = uri?.getFilePathFromContentUri(applicationContext)
+            val file = File(filePath)
+            val uriNew = FileProvider.getUriForFile(applicationContext, applicationContext.packageName+ ".provider",file)
+
+            uriNew?.let { selectedPdfUris.add(it) }
         }
 
         successListener?.invoke(true,selectedPdfUris)
