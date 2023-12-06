@@ -5,6 +5,9 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -24,6 +27,7 @@ class MainActivity : PdfPickerActivity(R.layout.activity_main) {
     private val binding: ActivityMainBinding by dataBinding()
     private lateinit var navController: NavHostController
     private var uriList: MutableList<Uri> = mutableListOf()
+    private var newSize by mutableStateOf(0)
 
     @Inject
     lateinit var pdfMergeTool: PdfMergeTool
@@ -57,7 +61,8 @@ class MainActivity : PdfPickerActivity(R.layout.activity_main) {
                     openFilePicker()
                 },
                 navController,
-                onNavItemClicked
+                onNavItemClicked,
+                newSize
             )
         }
     }
@@ -71,6 +76,7 @@ class MainActivity : PdfPickerActivity(R.layout.activity_main) {
     private fun initListener() = with(binding) {
         setSuccessListener { _, uris ->
             uriList = uris
+            newSize = uris.size
             navController.navigate("${NavigationItem.Merge.route}?pdfList=$uris")
         }
         pdfMergeTool.setSuccessListener { isSuccess, errorMessage ->
@@ -92,9 +98,6 @@ class MainActivity : PdfPickerActivity(R.layout.activity_main) {
         }
 
     }
-
-
-
 
 }
 

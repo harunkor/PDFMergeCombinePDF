@@ -1,9 +1,6 @@
 package co.torpido.pdfcombine.mergepdf.presentation.navigation
 
 import android.net.Uri
-import android.os.Build
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
@@ -14,18 +11,14 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -46,6 +39,7 @@ sealed class NavigationItem(var route: String, var icon: Int) {
 
 @Composable
 fun Navigation(navController: NavHostController, addPdf: () -> Unit) {
+
     NavHost(navController, startDestination = NavigationItem.Home.route) {
         composable(NavigationItem.Home.route) {
             HomeScreen(addPDF = addPdf)
@@ -70,13 +64,16 @@ fun Navigation(navController: NavHostController, addPdf: () -> Unit) {
     }
 }
 
+
+
 @Composable
-fun BottomNavigationBar(navController: NavController,onNavItemClicked: (NavigationItem) -> Unit, modifier: Modifier = Modifier) {
+fun BottomNavigationBar(navController: NavController,onNavItemClicked: (NavigationItem) -> Unit, modifier: Modifier = Modifier, listSize : Int) {
     val items = listOf(
         NavigationItem.Home,
         NavigationItem.Merge,
         NavigationItem.History
     )
+
 
     Surface(
         modifier = modifier
@@ -89,7 +86,7 @@ fun BottomNavigationBar(navController: NavController,onNavItemClicked: (Navigati
             val currentRoute = navBackStackEntry?.destination?.route
 
             items.forEach { item ->
-                val color = if (currentRoute == NavigationItem.Merge.route) {
+               val color = if (listSize >= 2 ) {
                     colorResource(id = R.color.pdf_document_text_color)
                 } else {
                     colorResource(id = R.color.unselected_color)
@@ -106,7 +103,6 @@ fun BottomNavigationBar(navController: NavController,onNavItemClicked: (Navigati
                                         .background(
                                             color = color
                                         )
-
                                         .size(60.dp)
                                         .padding(all = 18.dp)
                                         .align(Alignment.Top)
@@ -155,3 +151,4 @@ fun BottomNavigationBar(navController: NavController,onNavItemClicked: (Navigati
     }
 
 }
+
