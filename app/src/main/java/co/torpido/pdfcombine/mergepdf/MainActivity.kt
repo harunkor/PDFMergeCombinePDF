@@ -18,6 +18,10 @@ import co.torpido.pdfcombine.mergepdf.presentation.navigation.NavigationItem
 import co.torpido.pdfcombine.mergepdf.utils.PdfMergeTool
 import com.wada811.databindingktx.dataBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -28,6 +32,7 @@ class MainActivity : PdfPickerActivity(R.layout.activity_main) {
     private lateinit var navController: NavHostController
     private var uriList: MutableList<Uri> = mutableListOf()
     private var newSize by mutableStateOf(0)
+    private var isLoading by mutableStateOf(false)
 
     @Inject
     lateinit var pdfMergeTool: PdfMergeTool
@@ -39,7 +44,10 @@ class MainActivity : PdfPickerActivity(R.layout.activity_main) {
 
             }
             is NavigationItem.Merge -> if(uriList.size>1) {
-                pdfMergeTool.mergePDFs(uriList)
+                isLoading = true
+                CoroutineScope(Dispatchers.IO).launch {
+                    pdfMergeTool.mergePDFs(uriList)
+                }
             }
             is NavigationItem.History -> {
 
@@ -62,7 +70,8 @@ class MainActivity : PdfPickerActivity(R.layout.activity_main) {
                 },
                 navController,
                 onNavItemClicked,
-                newSize
+                newSize,
+                isLoading
             )
         }
     }
@@ -86,14 +95,14 @@ class MainActivity : PdfPickerActivity(R.layout.activity_main) {
                     "Download dizinine kayıt edilerek birleştirme tamamlandı",
                     Toast.LENGTH_SHORT
                 ).show()
-
+                isLoading = false
                 navController.navigate(NavigationItem.History.route)
             } else {
                 Toast.makeText(this@MainActivity, "Error: $errorMessage", Toast.LENGTH_SHORT).show()
 
             }
-            uriList.clear()
 
+            uriList.clear()
 
         }
 

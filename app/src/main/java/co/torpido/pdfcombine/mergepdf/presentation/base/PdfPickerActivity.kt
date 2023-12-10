@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -73,22 +74,27 @@ abstract class PdfPickerActivity(res: Int): AppCompatActivity(res) {
     }
 
     private fun checkPermissions() {
-        val readPermission = Manifest.permission.READ_EXTERNAL_STORAGE
-        val writePermission = Manifest.permission.WRITE_EXTERNAL_STORAGE
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+            val readPermission = Manifest.permission.READ_EXTERNAL_STORAGE
+            val writePermission = Manifest.permission.WRITE_EXTERNAL_STORAGE
 
-        val readPermissionGranted = ContextCompat.checkSelfPermission(this, readPermission) == PackageManager.PERMISSION_GRANTED
+            val readPermissionGranted =
+                ContextCompat.checkSelfPermission(this, readPermission) == PackageManager.PERMISSION_GRANTED
 
-        val writePermissionGranted = ContextCompat.checkSelfPermission(this, writePermission) == PackageManager.PERMISSION_GRANTED
+            val writePermissionGranted =
+                ContextCompat.checkSelfPermission(this, writePermission) == PackageManager.PERMISSION_GRANTED
 
-
-        if (readPermissionGranted && writePermissionGranted) {
-            openPicker()
+            if (readPermissionGranted && writePermissionGranted) {
+                openPicker()
+            } else {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(readPermission, writePermission),
+                    PERMISSION_REQUEST_CODE
+                )
+            }
         } else {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(readPermission, writePermission),
-                PERMISSION_REQUEST_CODE
-            )
+            openPicker()
         }
     }
 
