@@ -21,7 +21,10 @@ class Advertise(private val activity: Activity? = null) {
     private var mInterstitialAd: InterstitialAd? = null
     private var adRequest: AdRequest? = null
     private var rewardedAd: RewardedAd? = null
-
+    private  val interstitialAdUnitId = if (BuildConfig.DEBUG) activity?.getString(R.string.interstitial_test_id)
+    else activity?.getString(R.string.interstitial_id)
+    private  val rewardedAdAdUnitId = if (BuildConfig.DEBUG) activity?.getString(R.string.rewarded_test_id)
+    else activity?.getString(R.string.rewarded_id)
 
     init {
         activity?.apply {
@@ -32,7 +35,7 @@ class Advertise(private val activity: Activity? = null) {
 
     @Composable
     fun BannerAdView() {
-        val unitId = if (BuildConfig.DEBUG)
+        val bannerUnitId = if (BuildConfig.DEBUG)
             stringResource(id = R.string.banner_test_id)
         else stringResource(id = R.string.banner_id)
 
@@ -40,7 +43,7 @@ class Advertise(private val activity: Activity? = null) {
             factory = { context ->
                 AdView(context).apply {
                     setAdSize(AdSize.FULL_BANNER)
-                    adUnitId = unitId
+                    adUnitId = bannerUnitId
                     loadAd(AdRequest.Builder().build())
                 }
             }
@@ -50,7 +53,8 @@ class Advertise(private val activity: Activity? = null) {
     fun showInterstitialAd(){
         if (activity != null) {
             adRequest?.let { adRequest ->
-                InterstitialAd.load(activity,"ca-app-pub-3940256099942544/1033173712", adRequest, object : InterstitialAdLoadCallback() {
+                InterstitialAd.load(activity,
+                    interstitialAdUnitId!!, adRequest, object : InterstitialAdLoadCallback() {
                     override fun onAdFailedToLoad(adError: LoadAdError) {
                         mInterstitialAd = null
                     }
@@ -66,7 +70,7 @@ class Advertise(private val activity: Activity? = null) {
     fun showRewardedAd() {
         adRequest?.let { adRequest ->
             if (activity != null) {
-                RewardedAd.load(activity,"ca-app-pub-3940256099942544/5224354917", adRequest, object : RewardedAdLoadCallback() {
+                RewardedAd.load(activity, rewardedAdAdUnitId!!, adRequest, object : RewardedAdLoadCallback() {
                     override fun onAdFailedToLoad(adError: LoadAdError) {
                         rewardedAd = null
                     }
