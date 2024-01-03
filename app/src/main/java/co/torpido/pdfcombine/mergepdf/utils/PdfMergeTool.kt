@@ -1,5 +1,6 @@
 package co.torpido.pdfcombine.mergepdf.utils
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -10,6 +11,7 @@ import android.net.Uri
 import android.os.Environment
 import android.os.ParcelFileDescriptor
 import co.torpido.pdfcombine.mergepdf.R
+import co.torpido.pdfcombine.mergepdf.presentation.ui.advertise.Advertise
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

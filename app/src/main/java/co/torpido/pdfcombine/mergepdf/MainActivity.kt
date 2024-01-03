@@ -44,6 +44,7 @@ class MainActivity : PdfPickerActivity(R.layout.activity_main) {
     private var uriList: MutableList<Uri> = mutableListOf()
     private var newSize by mutableStateOf(0)
     private var isLoading by mutableStateOf(false)
+    private lateinit var advertise: Advertise
 
     @Inject
     lateinit var pdfMergeTool: PdfMergeTool
@@ -112,6 +113,8 @@ class MainActivity : PdfPickerActivity(R.layout.activity_main) {
 
     private fun initListener() = with(binding) {
         MobileAds.initialize(this@MainActivity) {}
+        advertise = Advertise(this@MainActivity)
+        advertise.showInterstitialAd()
         setSuccessListener { _, uris ->
             uriList = uris
             newSize = uris.size
@@ -126,11 +129,11 @@ class MainActivity : PdfPickerActivity(R.layout.activity_main) {
                 ).show()
                 isLoading = false
                 navController.navigate(NavigationItem.History.route)
+                advertise.showRewardedAd()
             } else {
                 Toast.makeText(this@MainActivity, "Error: $errorMessage", Toast.LENGTH_SHORT).show()
 
             }
-
             uriList.clear()
 
         }
