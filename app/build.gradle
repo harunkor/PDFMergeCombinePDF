@@ -86,5 +86,8 @@ dependencies {
     //Material Design
     implementation 'com.google.android.material:material:1.5.0'
 
+    //Admob
+    implementation 'com.google.android.gms:play-services-ads:22.6.0'
+
 
 }

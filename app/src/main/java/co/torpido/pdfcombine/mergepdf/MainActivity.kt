@@ -4,10 +4,18 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -15,7 +23,10 @@ import co.torpido.pdfcombine.mergepdf.databinding.ActivityMainBinding
 import co.torpido.pdfcombine.mergepdf.presentation.PdfApp
 import co.torpido.pdfcombine.mergepdf.presentation.base.PdfPickerActivity
 import co.torpido.pdfcombine.mergepdf.presentation.navigation.NavigationItem
+import co.torpido.pdfcombine.mergepdf.presentation.ui.advertise.Advertise
+import co.torpido.pdfcombine.mergepdf.presentation.ui.home.HomeScreen
 import co.torpido.pdfcombine.mergepdf.utils.PdfMergeTool
+import com.google.android.gms.ads.MobileAds
 import com.wada811.databindingktx.dataBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -81,8 +92,26 @@ class MainActivity : PdfPickerActivity(R.layout.activity_main) {
         navController = rememberNavController()
     }
 
+    @Preview
+    @Composable
+    fun MainScreenPreview() {
+        MaterialTheme {
+            PdfAppContent()
+            PdfApp(
+                addPDF = {
+                    openFilePicker()
+                },
+                navController,
+                onNavItemClicked,
+                newSize,
+                isLoading
+            )
+        }
+    }
+
 
     private fun initListener() = with(binding) {
+        MobileAds.initialize(this@MainActivity) {}
         setSuccessListener { _, uris ->
             uriList = uris
             newSize = uris.size

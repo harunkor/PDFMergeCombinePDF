@@ -1,8 +1,11 @@
 package co.torpido.pdfcombine.mergepdf.presentation
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.CircularProgressIndicator
@@ -21,6 +24,7 @@ import co.torpido.pdfcombine.mergepdf.R
 import co.torpido.pdfcombine.mergepdf.presentation.navigation.BottomNavigationBar
 import co.torpido.pdfcombine.mergepdf.presentation.navigation.Navigation
 import co.torpido.pdfcombine.mergepdf.presentation.navigation.NavigationItem
+import co.torpido.pdfcombine.mergepdf.presentation.ui.advertise.Advertise
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -42,7 +46,6 @@ fun PdfApp(addPDF: () -> Unit,navController: NavHostController,onNavItemClicked:
                 } else {
                     Navigation(navController = navController, addPdf = addPDF)
                 }
-
             }
         },
         backgroundColor = Color.Transparent

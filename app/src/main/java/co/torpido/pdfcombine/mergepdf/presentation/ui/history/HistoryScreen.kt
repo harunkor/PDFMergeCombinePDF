@@ -46,6 +46,7 @@ import androidx.core.content.FileProvider
 import co.torpido.pdfcombine.mergepdf.R
 import co.torpido.pdfcombine.mergepdf.extension.getFileNameFromUri
 import co.torpido.pdfcombine.mergepdf.extension.getPdfPageCount
+import co.torpido.pdfcombine.mergepdf.presentation.ui.advertise.Advertise
 import java.io.File
 
 @Composable
@@ -148,6 +149,11 @@ fun HistoryScreenList(
             }
         }
         item {
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Advertise().BannerAdView()
+            }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = if (pdfList.isEmpty()) stringResource(id = R.string.not_found)  else "History",
@@ -162,7 +168,9 @@ fun HistoryScreenList(
                     .padding(horizontal = 16.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
+
         }
+
 
 
             items(pdfList) {   pdfUri ->

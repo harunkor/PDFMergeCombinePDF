@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.torpido.pdfcombine.mergepdf.R
+import co.torpido.pdfcombine.mergepdf.presentation.ui.advertise.Advertise
 
 
 @Composable
@@ -97,7 +99,12 @@ fun HomeScreen(
             )
 
         }
-        Spacer(modifier = Modifier.height(100.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Advertise().BannerAdView()
+        }
+        Spacer(modifier = Modifier.height(40.dp))
         Image(
             painter = painterResource(
                 id = R.drawable.pdf_icon
