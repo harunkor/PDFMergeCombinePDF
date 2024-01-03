@@ -38,4 +38,6 @@ class Advertise {
         BannerAdView()
     }
 
+
+
 }

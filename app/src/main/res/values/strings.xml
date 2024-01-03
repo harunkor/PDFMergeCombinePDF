@@ -21,7 +21,7 @@
     <string name="files_will_be_merged">&#160;files will be merged</string>
     <string name="not_found">The merged pdf file was not found.</string>
 
-    <!-- Admob-->
+    <!-- Admob change banner_id -# banner_test_id dont change # -->
     <string name="banner_test_id">ca-app-pub-3940256099942544/6300978111</string>
     <string name="banner_id">ca-app-pub-3940256099942544/6300978111</string>
 
