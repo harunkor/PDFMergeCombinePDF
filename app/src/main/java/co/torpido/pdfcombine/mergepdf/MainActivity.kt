@@ -4,17 +4,11 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
@@ -24,15 +18,10 @@ import co.torpido.pdfcombine.mergepdf.presentation.PdfApp
 import co.torpido.pdfcombine.mergepdf.presentation.base.PdfPickerActivity
 import co.torpido.pdfcombine.mergepdf.presentation.navigation.NavigationItem
 import co.torpido.pdfcombine.mergepdf.presentation.ui.advertise.Advertise
-import co.torpido.pdfcombine.mergepdf.presentation.ui.home.HomeScreen
 import co.torpido.pdfcombine.mergepdf.utils.PdfMergeTool
 import com.google.android.gms.ads.MobileAds
 import com.wada811.databindingktx.dataBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -55,16 +44,17 @@ class MainActivity : PdfPickerActivity(R.layout.activity_main) {
             is NavigationItem.Home -> {
 
             }
-            is NavigationItem.Merge -> if(uriList.size>1) {
+
+            is NavigationItem.Merge -> if (uriList.size > 1) {
                 isLoading = true
                 pdfMergeTool.mergePDFs(uriList)
             }
+
             is NavigationItem.History -> {
 
             }
         }
     }
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

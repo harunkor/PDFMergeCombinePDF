@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'com.google.dagger.hilt.android'
+    id 'com.google.firebase.crashlytics'
 }
 
 android {
@@ -88,6 +89,11 @@ dependencies {
 
     //Admob
     implementation 'com.google.android.gms:play-services-ads:22.6.0'
+
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
+    implementation("com.google.firebase:firebase-crashlytics")
+    implementation("com.google.firebase:firebase-analytics")
 
 
 }
