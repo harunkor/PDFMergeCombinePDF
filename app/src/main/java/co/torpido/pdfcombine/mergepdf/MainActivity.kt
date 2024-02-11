@@ -57,9 +57,7 @@ class MainActivity : PdfPickerActivity(R.layout.activity_main) {
             }
             is NavigationItem.Merge -> if(uriList.size>1) {
                 isLoading = true
-                CoroutineScope(Dispatchers.IO).launch {
-                    pdfMergeTool.mergePDFs(uriList)
-                }
+                pdfMergeTool.mergePDFs(uriList)
             }
             is NavigationItem.History -> {
 
@@ -75,7 +73,7 @@ class MainActivity : PdfPickerActivity(R.layout.activity_main) {
 
         window.statusBarColor = ContextCompat.getColor(this, R.color.white)
         setContent {
-            PdfAppContent()
+            navController = rememberNavController()
             PdfApp(
                 addPDF = {
                     openFilePicker()
@@ -88,16 +86,12 @@ class MainActivity : PdfPickerActivity(R.layout.activity_main) {
         }
     }
 
-    @Composable
-    fun PdfAppContent() {
-        navController = rememberNavController()
-    }
 
     @Preview
     @Composable
     fun MainScreenPreview() {
         MaterialTheme {
-            PdfAppContent()
+            navController = rememberNavController()
             PdfApp(
                 addPDF = {
                     openFilePicker()

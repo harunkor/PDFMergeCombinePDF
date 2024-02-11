@@ -15,6 +15,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import co.torpido.pdfcombine.mergepdf.extension.getFilePathFromContentUri
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 
@@ -43,25 +47,30 @@ abstract class PdfPickerActivity(res: Int): AppCompatActivity(res) {
     }
 
     private fun handleSelectedPdfFiles(data: Intent) {
-        val clipData = data.clipData
-        if (clipData != null) {
-            for (i in 0 until clipData.itemCount) {
-                val uri = clipData.getItemAt(i).uri
-                val filePath = uri.getFilePathFromContentUri(applicationContext)
+        CoroutineScope(Dispatchers.IO).launch {
+            val clipData = data.clipData
+            if (clipData != null) {
+                for (i in 0 until clipData.itemCount) {
+                    val uri = clipData.getItemAt(i).uri
+                    val filePath = uri.getFilePathFromContentUri(applicationContext)
+                    val file = File(filePath)
+                    val uriNew = FileProvider.getUriForFile(applicationContext, applicationContext.packageName+ ".provider",file)
+                    selectedPdfUris.add(uriNew)
+                }
+            } else {
+                val uri = data.data
+                val filePath = uri?.getFilePathFromContentUri(applicationContext)
                 val file = File(filePath)
                 val uriNew = FileProvider.getUriForFile(applicationContext, applicationContext.packageName+ ".provider",file)
-                selectedPdfUris.add(uriNew)
-            }
-        } else {
-            val uri = data.data
-            val filePath = uri?.getFilePathFromContentUri(applicationContext)
-            val file = File(filePath)
-            val uriNew = FileProvider.getUriForFile(applicationContext, applicationContext.packageName+ ".provider",file)
 
-            uriNew?.let { selectedPdfUris.add(it) }
+                uriNew?.let { selectedPdfUris.add(it) }
+            }
+
+            withContext(Dispatchers.Main) {
+                successListener?.invoke(true,selectedPdfUris)
+            }
         }
 
-        successListener?.invoke(true,selectedPdfUris)
     }
 
 
